@@ -48,7 +48,15 @@ body {
 }
 
 .publication-title {
+    margin-top: 1em;
     font-family: 'Google Sans', sans-serif;
+}
+
+.publication-subtitle {
+    font-weight: bold;
+    font-size: 190% !important;
+    font-family: 'Google Sans', sans-serif;
+    margin-bottom: 0.5em !important;
 }
 
 .publication-authors {
@@ -68,6 +76,8 @@ body {
 }
 
 .publication-authors {
+    margin-bottom: 0.9em;
+    margin-top: 0.9em;
 }
 
 .publication-authors a {
@@ -112,6 +122,12 @@ body {
 
 .results-carousel {
   overflow: hidden;
+}
+
+.other-video {
+  margin-bottom: 1em;
+  border: 1px solid #bbb;
+  border-radius: 10px;
 }
 
 .results-carousel .item {

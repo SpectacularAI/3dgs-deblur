@@ -31,7 +31,7 @@
       <div class="columns is-centered">
         <div class="column has-text-centered">
           <h1 class="title is-1 publication-title">Gaussian Splatting on the Move</h1>
-          <h2 class="subtitle is-4">Blur and Rolling Shutter Compensation for Natural Camera Motion</h2>
+          <h2 class="subtitle is-4 publication-subtitle">Blur and Rolling Shutter Compensation for Natural Camera Motion</h2>
           <div class="is-size-5 publication-authors">
             <span class="author-block">
               <a href="https://oseiskar.github.io/">Otto Seiskari</a><sup>1</sup>,</span>
@@ -127,35 +127,27 @@
 <section class="section">
   <div class="container is-max-desktop">
     <div class="columns is-centered">
-      <div class="column">
-        <div class="content">
-          <h2 class="title is-3">Motion blur</h2>
-          <p>
-            Foo bar
-          </p>
-          <video autoplay muted loop playsinline height="100%">
-            <source src="./static/videos/demo_video-mb.mp4"
-                    type="video/mp4">
-          </video>
-          <video autoplay muted loop playsinline height="100%">
-            <source src="./static/videos/mb-cozyroom.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
+      <div class="column content has-text-centered">
+        <h2 class="title is-4">Motion blur</h2>
+        <video autoplay muted loop playsinline height="100%" class="other-video">
+          <source src="./static/videos/synthetic_motion_blur_example.mp4"
+                  type="video/mp4">
+        </video>
+        <video autoplay muted loop playsinline height="100%" class="other-video">
+          <source src="./static/videos/mb-cozyroom.mp4"
+                  type="video/mp4">
+        </video>
       </div>
 
       <div class="column">
-        <h2 class="title is-3">Rolling shutter</h2>
         <div class="columns is-centered">
-          <div class="column content">
-            <p>
-              Baz
-            </p>
-            <video autoplay muted loop playsinline height="100%">
-              <source src="./static/videos/demo_video-rs.mp4"
+          <div class="column content has-text-centered">
+            <h2 class="title is-4">Rolling shutter</h2>
+            <video autoplay muted loop playsinline height="100%" class="other-video">
+              <source src="./static/videos/synthetic_rolling_shutter_example.mp4"
                       type="video/mp4">
             </video>
-            <video autoplay muted loop playsinline height="100%">
+            <video autoplay muted loop playsinline height="100%" class="other-video">
               <source src="./static/videos/rs-cozyroom.mp4"
                       type="video/mp4">
             </video>
@@ -182,7 +174,11 @@
       </div>
     </div>
     <!--/ Abstract. -->
+  </div>
+</section>
 
+<section class="section">
+  <div class="container is-max-desktop">
     <!-- Paper video. -->
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
