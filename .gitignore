@@ -1,3 +1,11 @@
+*~
+__pycache__/
+*.pyc
+.vscode
+outputs/
+renders/
+data/
+venv/
 static/
 source_videos
 source_videos/
