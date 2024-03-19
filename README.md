@@ -102,3 +102,10 @@ Monitoring the training process from another terminal
 See `ns-train` output for the actual folder name
 
     tensorboard --logdir outputs/my_model/splatfacto/TIMESTAMP
+
+# License
+
+The code in this repository (except. the `gh-pages` website branch) is licensed under Apache 2.0.
+See `LICENSE` and `NOTICE` files for more information.
+
+For the source code of the website and its license, see the [`gh-pages` branch](https://github.com/SpectacularAI/3dgs-deblur/tree/gh-pages).
