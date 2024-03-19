@@ -1,0 +1,6 @@
+[submodule "nerfstudio"]
+	path = nerfstudio
+	url = https://github.com/SpectacularAI/nerfstudio
+[submodule "gsplat"]
+	path = gsplat
+	url = https://github.com/SpectacularAI/gsplat
