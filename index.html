@@ -103,7 +103,7 @@
                   <span class="icon">
                       <i class="fab fa-github"></i>
                   </span>
-                  <span>Code</span>
+                  <span>Code (Nerfstudio)</span>
                   </a>
               </span>
               <!-- Dataset Link. -->
@@ -124,37 +124,60 @@
   </div>
 </section>
 
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column content has-text-centered">
-        <h2 class="title is-4">Motion blur</h2>
-        <video autoplay muted loop playsinline height="100%" class="other-video">
-          <source src="./static/videos/synthetic_motion_blur_example.mp4"
-                  type="video/mp4">
-        </video>
-        <video autoplay muted loop playsinline height="100%" class="other-video">
-          <source src="./static/videos/mb-cozyroom.mp4"
-                  type="video/mp4">
-        </video>
-      </div>
-
-      <div class="column">
-        <div class="columns is-centered">
-          <div class="column content has-text-centered">
-            <h2 class="title is-4">Rolling shutter</h2>
-            <video autoplay muted loop playsinline height="100%" class="other-video">
-              <source src="./static/videos/synthetic_rolling_shutter_example.mp4"
-                      type="video/mp4">
-            </video>
-            <video autoplay muted loop playsinline height="100%" class="other-video">
-              <source src="./static/videos/rs-cozyroom.mp4"
-                      type="video/mp4">
-            </video>
+<section class="section" style="margin-top: -50px;">
+    <div class="container is-max-desktop">
+      <!-- TLDR. -->
+      <div class="content" style="display: flex; align-items:">
+          <h2 class="title is-5" style="margin-right: 10px; white-space: nowrap; letter-spacing: -2px;">
+            <span style="color: red;">T</span>
+            <span style="color: blue;">L</span>
+            <span style="color: green;">D</span>
+            <span style="color: orange;">R</span>
+            <span style="color: black;">:</span>
+            </h2>
+          <div class="content has-text-justified">
+            <p>
+                Motion blur and rolling shutter compensation for 3DGS using VIO IMU data, pose refinement, and a differentiable image formation model. We show results on synthetic and casually captured smartphone data.
+            </p>
           </div>
-
-        </div>
       </div>
+      <!--/ TLDR. -->
+    </div>
+  </section>
+
+<section class="hero is-light is-small">
+    <div class="hero-body">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered">
+            <div class="column content has-text-centered">
+                <h2 class="title is-4">Motion blur</h2>
+                <video autoplay muted loop playsinline height="100%" class="other-video">
+                <source src="./static/videos/synthetic_motion_blur_example.mp4"
+                        type="video/mp4">
+                </video>
+                <video autoplay muted loop playsinline height="100%" class="other-video">
+                <source src="./static/videos/mb-cozyroom.mp4"
+                        type="video/mp4">
+                </video>
+            </div>
+
+            <div class="column">
+                <div class="columns is-centered">
+                <div class="column content has-text-centered">
+                    <h2 class="title is-4">Rolling shutter</h2>
+                    <video autoplay muted loop playsinline height="100%" class="other-video">
+                    <source src="./static/videos/synthetic_rolling_shutter_example.mp4"
+                            type="video/mp4">
+                    </video>
+                    <video autoplay muted loop playsinline height="100%" class="other-video">
+                    <source src="./static/videos/rs-cozyroom.mp4"
+                            type="video/mp4">
+                    </video>
+                </div>
+
+                </div>
+            </div>
+        </div>
     </div>
   </div>
 </section>
@@ -337,8 +360,8 @@
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
     <pre><code>@article{seiskari-2024-3dgs-deblur,
-  author    = {TODO},
-  title     = {TODO},
+  author    = {Otto Seiskari and Jerry Ylilammi and Valtteri Kaatrasalo and Pekka Rantalankila and Matias Turkulainen and Juho Kannala and Esa Rahtu and Arno Solin},
+  title     = {Gaussian Splatting on the Move: Blur and Rolling Shutter Compensation for Natural Camera Motion},
   journal   = {arXiv preprint},
   year      = {2024},
 }</code></pre>
