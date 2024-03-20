@@ -9,4 +9,5 @@ venv/
 static/
 source_videos
 source_videos/
+overlay_images/
 index.html

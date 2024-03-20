@@ -198,11 +198,17 @@ def process(out_folder, args):
                 rough_up_dir
             ))
 
+        center_cam_to_world = look_at(scene_cam_center, cam_target, rough_up_dir)
+
+    fov = 2.0 * np.arctan(0.5 * transforms['h'] / transforms['fl_y']) / np.pi * 180.0 / args.zoom
+    frames_per_transition = round((length_seconds *  args.fps) / (len(frame_poses) - 1))
+
     width = transforms['w']
     height = transforms['h']
+    if args.resolution is not None:
+        width, height = [int(x) for x in args.resolution.split('x')]
+
     aspect = width / float(height)
-    fov = 2.0 * np.arctan(0.5 * height / transforms['fl_y']) / np.pi * 180.0 / args.zoom
-    frames_per_transition = round((length_seconds *  args.fps) / (len(frame_poses) - 1))
 
     cam_path = {
         'render_width': width,
@@ -228,6 +234,9 @@ def process(out_folder, args):
     add_velocities(cam_path)
     cam_path['rolling_shutter_time'] = args.rolling_shutter_time
     cam_path['exposure_time'] = args.exposure_time
+
+    if args.artificial_keep_center_pose:
+        for c in cam_path['camera_path']: c['camera_to_world'] = center_cam_to_world.tolist()
 
     trajectory_file = os.path.join(result_folder, 'demo_video_camera_path.json')
 
@@ -275,7 +284,9 @@ if __name__ == '__main__':
     parser.add_argument('--artificial_relative_look_at_distance', default=3, type=float)
     parser.add_argument('--artificial_y_rounds', default=1, type=int)
     parser.add_argument('--artificial_length_seconds', default=8, type=float)
+    parser.add_argument('--artificial_keep_center_pose', action='store_true')
     parser.add_argument('--rolling_shutter_time', default=0.0, type=float)
+    parser.add_argument('--resolution', type=str, default=None)
     parser.add_argument('--exposure_time', default=0.0, type=float)
     parser.add_argument('--zoom', default=1.0, type=float)
     parser.add_argument('--video_crf', default=18, type=int)
