@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eux
 
-SRC_FOLDER="source_videos"
+SRC_FOLDER="data/renders"
 OUT_FOLDER="static/videos"
 
 mkdir -p "$OUT_FOLDER"
