@@ -1,5 +1,4 @@
- # Gaussian Splatting on the Move
- **Blur and Rolling Shutter Compensation for Natural Camera Motion**
+# Gaussian Splatting on the Move: <br> Blur and Rolling Shutter Compensation for Natural Camera Motion
 
 ## Installation
 
@@ -105,7 +104,7 @@ See `ns-train` output for the actual folder name
 
 # License
 
-The code in this repository (except. the `gh-pages` website branch) is licensed under Apache 2.0.
+The code in this repository (except the `gh-pages` website branch) is licensed under Apache 2.0.
 See `LICENSE` and `NOTICE` files for more information.
 
 For the source code of the website and its license, see the [`gh-pages` branch](https://github.com/SpectacularAI/3dgs-deblur/tree/gh-pages).
