@@ -12,16 +12,26 @@ Git must be installed on the system.
 
 ## Data
 
-### Raw inputs
-
-Assumed to be in the directory `data/inputs-raw`. Processed by running `./scripts/process.sh`.
-
-Another option is directly using the processed data, which is trainable with Nerfstudio.
-
 ### Processed inputs
 
-The inputs directly trainable with our fork of Nerfstudio are in `data/inputs-processed`.
+The inputs directly trainable with our fork of Nerfstudio are in stored in `data/inputs-processed`.
 Its subfolders are called "datasets" in these scripts.
+
+The data can be downloaded by first installing: `pip install gdown==4.7.3` (to avoid https://github.com/wkentaro/gdown/issues/291) and then running
+
+    python download_data.py processed-all
+    # or 'synthetic-all' for a quicker test
+
+### Raw inputs
+
+Alternatively, you can download the raw input data (`data/inputs-raw`) as
+
+    python download_data.py processed-all
+
+and reprocess it with
+
+    pip install spectacularAI[full]
+    ./scripts/process.sh
 
 ## Training
 
