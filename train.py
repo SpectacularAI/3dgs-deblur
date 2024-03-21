@@ -298,6 +298,10 @@ if __name__ == '__main__':
         #'synthetic-mbrs-pose-calib-noise': full_variants,
         'synthetic-posenoise-2nd-pass': [
             baseline
+        ],
+        'colmap-sai-cli-vels-blur-scored': [
+            baseline,
+            { 'no_pose_opt', 'no_rolling_shutter' }
         ]
     }
 
@@ -306,7 +310,7 @@ if __name__ == '__main__':
     parser.add_argument("--no_pose_opt", action='store_true')
     parser.add_argument("--no_motion_blur", action='store_true')
     parser.add_argument('--no_rolling_shutter', action='store_true')
-    parser.add_argument('--dataset', type=str, default='sai-cli')
+    parser.add_argument('--dataset', type=str, default='colmap-sai-cli-vels-blur-scored')
     parser.add_argument('--train_all', action='store_true')
     parser.add_argument('--draft', action='store_true')
     parser.add_argument('--no_gamma', action='store_true')
