@@ -13,8 +13,6 @@ Git must be installed on the system.
 
 ## Data
 
-### Processed inputs
-
 The inputs directly trainable with our fork of Nerfstudio are stored in `data/inputs-processed` folder.
 Its subfolders are called "datasets" in these scripts.
 
@@ -53,15 +51,6 @@ The data can be automatically downloaded by first installing: `pip install unzip
 </code>
 </pre>
 </details>
-
-### Raw inputs
-
-Alternatively, you can download the raw input data (`data/inputs-raw`) from the Zenodo links for the [synthetic](https://zenodo.org/records/10847884) and [SAI smartphone](https://zenodo.org/records/10848124) datasets respectively.
-
-Process the raw data with:
-
-    pip install spectacularAI[full]
-    ./scripts/process.sh
 
 ## Training
 
@@ -123,6 +112,37 @@ Custom:
 
  * Automatically created by `train.py`: Renders of evaluation images and predictions are available in `outputs/DATASET/VARIANT/splatfacto/TIMESTAMP` (`/renders`, or `/demo_video*.mp4` if `render_video.py` has been run, see below)
  * Demo videos: see `render_video.py`.
+
+## Processing the raw input data
+
+This method also creates the extra variants discussed in the appendix/supplementary material of the paper.
+
+**Synthetic data**: Download and process as
+
+    python download_data.py --dataset synthetic-raw
+    python process_synthetic_inputs.py
+
+**Smartphone data**: Download as:
+
+    python download_data.py --dataset sai-raw
+
+and then process with the following steps
+
+ 1. Process and convert using the Spectacular AI SDK to get VIO velocity and pose estimates (`--preview` is optional). Creates a dataset called `sai-cli`:
+
+        python process_sai_inputs.py --preview
+
+ 2. Run COLMAP. NOTE: this has some level of randomness. COLMAP may or may not fail for some of the sequences, but should eventyally succeed for the included sequences after a few retries. Run until ALL sequences succeed. See also the `python run_colmap.py` to list cases and `python run_colmap.py --case=N` to run a specific case. Creates a dataset called `colmap-sai-cli-imgs`.
+
+        python run_colmap.py all
+
+ 3. Create the other variants by combining and augmenting the above two by running:
+
+        ./scripts/create_smartphone_variants.sh
+        # or 
+        # EXTRA_VARIANTS=ON ./scripts/create_smartphone_variants.sh
+
+Note: all the components in this pipellsine are not guaranteed to be deterministic, especially when executed on different machines.
 
 ## Training with new recordings directly
 

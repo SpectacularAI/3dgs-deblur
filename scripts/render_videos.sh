@@ -1,4 +1,8 @@
 #!/bin/bash
+# Render raw material for the demo videos
+# Assumes you have ran "train.py" with all of the synthetic
+# cases (including 2nd pass) and most of the smartphone datasets
+
 set -eux
 
 for case in factory cozyroom tanabata pool; do
