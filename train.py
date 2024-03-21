@@ -194,6 +194,8 @@ def process(input_folder, args):
 
     cmd.append('nerfstudio-data')
 
+    # Manual scaling is used to ensure the position and orientation penalty terms
+    # have a reasonable scale, while keeping poses consistent in two optimization passes
     manual_scale_factor = 1.0
     if args.train_all:
         manual_scale_factor = compute_manual_scale_factor(os.path.join(input_folder, 'transforms.json'))

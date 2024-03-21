@@ -102,10 +102,7 @@ def process(input_folder, args):
             # only linear velocity should be scaled
             frame['camera_linear_velocity'] = [v * scale_factor for v in frame['camera_linear_velocity']]
     
-    if args.sai_input_folder is None:
-        processed_prefix = 'data/inputs-processed'
-    else:
-        processed_prefix = 'data/inputs-processed/misc'
+    processed_prefix = 'data/inputs-processed'
     
     if args.pose_opt_pass_dir is not None:
         output_prefix = os.path.join(processed_prefix, args.dataset + '-2nd-pass')
@@ -145,7 +142,10 @@ def process(input_folder, args):
     if args.set_rolling_shutter_to is not None:
         combined_poses['rolling_shutter_time'] = args.set_rolling_shutter_to
 
-    output_folder = os.path.join(output_prefix, name)
+    if args.output_folder is None:
+        output_folder = os.path.join(output_prefix, name)
+    else:
+        output_folder = args.output_folder
 
     print('Output folder: ' + output_folder)
     if not args.dry_run:
@@ -162,6 +162,7 @@ if __name__ == '__main__':
 
     parser.add_argument("input_folder", type=str, default=None, nargs='?')
     parser.add_argument('sai_input_folder', default=None, nargs='?')
+    parser.add_argument('output_folder', default=None, nargs='?')
     parser.add_argument('--dataset', default='sai-cli')
     parser.add_argument('--set_rolling_shutter_to', default=None, type=float)
     parser.add_argument('--keep_intrinsics', action='store_true')

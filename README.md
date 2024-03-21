@@ -142,28 +142,36 @@ and then process with the following steps
         # or 
         # EXTRA_VARIANTS=ON ./scripts/create_smartphone_variants.sh
 
-Note: all the components in this pipellsine are not guaranteed to be deterministic, especially when executed on different machines.
+Note: all the components in this pipeline are not guaranteed to be deterministic, especially when executed on different machines.
 
-## Training with new recordings directly
+## Training with custom data
 
-First run `sai-cli process` to select key frames and compute their poses and velocities:
+The method can be also be used with custom data recorded using the Spectacular Rec app ([v1.0.0+ for Android](https://play.google.com/store/apps/details?id=com.spectacularai.rec)), iOS: _coming soon_.
 
-    sai-cli process /PATH/TO/spectacular-rec_TIMESTAMP/ data/inputs-processed/misc/my_model --preview3d --preview
+First, download and extract a recording created using the app, e.g., `/PATH/TO/spectacular-rec-MY_RECORDING`.
 
-The train with all features enabled (example):
+**iOS cases** (short rolling shutter read-out): Process as
 
-    ns-train splatfacto --data data/inputs-processed/misc/my_model \
-        --output-dir data/outputs/misc \
-        --pipeline.model.camera-optimizer.mode=SO3xR3 \
-        --vis=viewer+tensorboard \
-        --viewer.quit-on-train-completion True
+    python process_sai_custom.py /PATH/TO/spectacular-rec-MY_RECORDING
 
-Monitoring the training process from another terminal 
-See `ns-train` output for the actual folder name
+and then train in motion-blur-only mode as:
 
-    tensorboard --logdir outputs/my_model/splatfacto/TIMESTAMP
+    python train.py data/inputs-processed/custom/spectacular-rec-MY_RECORDING \
+        --train_all --no_pose_opt --no_rolling_shutter --preview
 
-# License
+**Android** (long rolling-shutter readout). The recommended mode is:
+
+    python process_sai_custom.py /PATH/TO/spectacular-rec-MY_RECORDING --keep_intrinsics
+    python train.py data/inputs-processed/custom/spectacular-rec-MY_RECORDING --train_all --preview
+
+To improve results even further, a second training pass (without pose optimization) can also be used (TODO: extend instructions). It is also possible to use the motion-blur only mode similarly to iOS.
+
+For difficult cases where COLMAP is likely to fail (examples in `data/inputs-raw/spectacular-rec-extras/difficult_colmap_fail`), the Spectacular AI VISLAM poses can be used in place of COLMAP to initialize the pose optimization:
+
+    python process_sai_custom.py /PATH/TO/spectacular-rec-MY_RECORDING --skip_colmap
+    python train.py data/inputs-processed/custom/spectacular-rec-MY_RECORDING --train_all --preview
+
+## License
 
 The code in this repository (except the `gh-pages` website branch) is licensed under Apache 2.0.
 See `LICENSE` and `NOTICE` files for more information.

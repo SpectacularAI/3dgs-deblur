@@ -4,14 +4,13 @@ import subprocess
 import shutil
 import tempfile
 
-def process(input_folder, args, misc=False):
+def process(input_folder, args):
     name = os.path.basename(os.path.normpath(input_folder))
     postf = 'colmap-' + args.dataset + '-imgs'
-    if misc:
-        output_prefix = 'data/inputs-processed/misc/' + postf
+    if args.output_folder is None:
+        output_folder = os.path.join('data/inputs-processed/' + postf, name)
     else:
-        output_prefix = 'data/inputs-processed/' + postf
-    output_folder = os.path.join(output_prefix, name)
+        output_folder = args.output_folder
 
     input_image_folder = os.path.join(input_folder, 'images')
 
@@ -25,8 +24,6 @@ def process(input_folder, args, misc=False):
     print('%d images (would be) copied in a temporary directory' % n)
 
     # Print the path to the temporary directory
-    temp_dir.name
-
     cmd = [
         'ns-process-data',
         'images',
@@ -47,6 +44,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
 
     parser.add_argument("input_folder", type=str, default=None, nargs='?')
+    parser.add_argument("output_folder", type=str, default=None, nargs='?')
     parser.add_argument('--dry_run', action='store_true')
     parser.add_argument('--dataset', default='sai-cli')
     parser.add_argument('--case_number', type=int, default=-1)
@@ -78,8 +76,7 @@ if __name__ == '__main__':
             selected_cases = [cases[args.case_number - 1]]
     else:
         selected_cases = [args.input_folder]
-        misc = True
 
     for case in selected_cases:
         print('Processing ' + case)
-        process(case, args, misc=misc)
+        process(case, args)
