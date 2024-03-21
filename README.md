@@ -1,17 +1,20 @@
 # Gaussian Splatting on the Move: <br> Blur and Rolling Shutter Compensation for Natural Camera Motion
 
-[![paper](https://img.shields.io/badge/arXiv-2403.13327-b31b1b?logo=arxiv&logoColor=red)](https://arxiv.org/abs/2403.13327)
+[![arXiv preprint](https://img.shields.io/badge/arXiv-2403.13327-b31b1b?logo=arxiv&logoColor=red)](https://arxiv.org/abs/2403.13327)
 
 ## Installation
 
 Prerequisites: run on a Linux system with a recent NVidia RTX GPU with at least 8 GB of VRAM.
-Git must be installed on the system.
+Git must be installed.
 
  1. Activate a Conda environment with PyTorch that [supports Nerfstudio](https://github.com/nerfstudio-project/nerfstudio/?tab=readme-ov-file#dependencies)
  2. Possibly required, depending on your environment: `conda install -c conda-forge gcc=12.1.0`
  3. Run `./scripts/install.sh` (see steps within if something goes wrong)
 
 ## Data
+
+[![Smartphone data](https://zenodo.org/badge/DOI/10.5281/zenodo.10848124.svg)](https://doi.org/10.5281/zenodo.10848124)
+[![Synthetic data](https://zenodo.org/badge/DOI/10.5281/zenodo.10847884.svg)](https://doi.org/10.5281/zenodo.10847884)
 
 The inputs directly trainable with our fork of Nerfstudio are stored in `data/inputs-processed` folder.
 Its subfolders are called "datasets" in these scripts.
@@ -177,3 +180,5 @@ The code in this repository (except the `gh-pages` website branch) is licensed u
 See `LICENSE` and `NOTICE` files for more information.
 
 For the source code of the website and its license, see the [`gh-pages` branch](https://github.com/SpectacularAI/3dgs-deblur/tree/gh-pages).
+
+The licenses of the datasets (CC BY-SA 4.0 & CC BY 4.0) are detailed on the Zenodo pages.
