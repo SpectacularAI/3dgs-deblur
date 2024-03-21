@@ -1,5 +1,7 @@
 # Gaussian Splatting on the Move: <br> Blur and Rolling Shutter Compensation for Natural Camera Motion
 
+[![paper](https://img.shields.io/badge/arXiv-2403.13327-b31b1b?logo=arxiv&logoColor=red)](https://arxiv.org/abs/2403.13327)
+
 ## Installation
 
 Prerequisites: run on a Linux system with a recent NVidia RTX GPU with at least 8 GB of VRAM.
