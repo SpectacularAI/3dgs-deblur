@@ -14,21 +14,50 @@ Git must be installed on the system.
 
 ### Processed inputs
 
-The inputs directly trainable with our fork of Nerfstudio are in stored in `data/inputs-processed`.
+The inputs directly trainable with our fork of Nerfstudio are stored in `data/inputs-processed` folder.
 Its subfolders are called "datasets" in these scripts.
 
-The data can be downloaded by first installing: `pip install gdown==4.7.3` (to avoid https://github.com/wkentaro/gdown/issues/291) and then running
+The data can be automatically downloaded by first installing: `pip install unzip` and then running
 
-    python download_data.py processed-all
-    # or 'synthetic-all' for a quicker test
+    python download_data.py --dataset synthetic
+    # or 'sai' for processed real world smartphone data
+
+<details>
+<summary> The data folder structure is as follows: </summary>
+<pre>
+<code>
+<3dgs-deblur>
+|---data
+    |---inputs-processed
+        |---colmap-sai-cli-vels-blur-scored/
+            |---iphone-lego1
+                |---images
+                    |---image 0
+                    |---image 1
+                    |---...
+                |---sparse_pc.ply
+                |---transforms.json
+            |---...
+        |---synthetic-mb
+            |---cozyroom
+                |---images
+                    |---image 0
+                    |---image 1
+                    |---...
+                |---sparse_pc.ply
+                |---transforms.json
+            |---...
+        |---...
+|---...
+</code>
+</pre>
+</details>
 
 ### Raw inputs
 
-Alternatively, you can download the raw input data (`data/inputs-raw`) as
+Alternatively, you can download the raw input data (`data/inputs-raw`) from the Zenodo links for the [synthetic](https://zenodo.org/records/10847884) and [SAI smartphone](https://zenodo.org/records/10848124) datasets respectively.
 
-    python download_data.py processed-all
-
-and reprocess it with
+Process the raw data with:
 
     pip install spectacularAI[full]
     ./scripts/process.sh
