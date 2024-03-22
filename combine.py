@@ -25,9 +25,6 @@ def process(input_folder, args):
     else:
         sai_folder = args.sai_input_folder
 
-    print(input_folder)
-    print(sai_folder)
-
     if args.pose_opt_pass_dir is None:
         src_poses = read_json(os.path.join(input_folder, 'transforms.json'))
         image_folder = os.path.join(input_folder, 'images')

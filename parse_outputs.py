@@ -12,8 +12,6 @@ def find_and_parse_directories_containing_splatting_metrics(root_dir):
     def parse_dir(dirpath, filename):
         run_name = dirpath[len(root_dir)+1:]
         dataset, _, rest = run_name.partition('/')
-        
-        # if dataset == 'misc': return None
 
         rest_split = rest.split('/')
         if len(rest_split) != 4: return None

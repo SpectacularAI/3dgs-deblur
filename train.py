@@ -179,7 +179,7 @@ def process(input_folder, args):
     cmd.extend(variant_cmd)
 
     if args.case_number is None:
-        dataset_folder = 'misc'
+        dataset_folder = 'custom'
     else:
         dataset_folder = args.dataset
         
@@ -233,7 +233,12 @@ def process(input_folder, args):
         elapsed_time = end_time - start_time
         print('Training time: %s' % str(datetime.timedelta(seconds=elapsed_time)))
     
-    evaluate(output_folder, elapsed_time, extract_poses=pose_opt_enabled, dry_run=args.dry_run, scale_factor=manual_scale_factor)
+    if not args.no_eval:
+        evaluate(output_folder, elapsed_time,
+            extract_poses=pose_opt_enabled,
+            dry_run=args.dry_run,
+            render_images=args.render_images,
+            scale_factor=manual_scale_factor)
 
 def find_config_path(output_folder):
     model_folder = os.path.join(output_folder, 'splatfacto')
@@ -319,7 +324,9 @@ if __name__ == '__main__':
     parser.add_argument('--no_blur_regularization', action='store_true')
     parser.add_argument('--no_blur_velocity_regularization', action='store_true')
     parser.add_argument('--dry_run', action='store_true')
+    parser.add_argument('--render_images', action='store_true')
     parser.add_argument('--eval_only', action='store_true')
+    parser.add_argument('--no_eval', action='store_true')
 
     parser.add_argument('--case_number', type=int, default=None)
     args = parser.parse_args()

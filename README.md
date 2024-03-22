@@ -149,30 +149,23 @@ Note: all the components in this pipeline are not guaranteed to be deterministic
 
 ## Training with custom data
 
-The method can be also be used with custom data recorded using the Spectacular Rec app ([v1.0.0+ for Android](https://play.google.com/store/apps/details?id=com.spectacularai.rec)), iOS: _coming soon_.
+The method can be also be used with custom data recorded using the Spectacular Rec app ([v1.0.0+ for Android](https://play.google.com/store/apps/details?id=com.spectacularai.rec), [v1.2.0+ for iOS](https://apps.apple.com/us/app/spectacular-rec/id6473188128)).
 
 First, download and extract a recording created using the app, e.g., `/PATH/TO/spectacular-rec-MY_RECORDING`.
 
 **iOS cases** (short rolling shutter read-out): Process as
 
-    python process_sai_custom.py /PATH/TO/spectacular-rec-MY_RECORDING
-
-and then train in motion-blur-only mode as:
-
-    python train.py data/inputs-processed/custom/spectacular-rec-MY_RECORDING \
-        --train_all --no_pose_opt --no_rolling_shutter --preview
+    ./scrpts/process_and_train_sai_custom_mb.sh /PATH/TO/spectacular-rec-MY_RECORDING
 
 **Android** (long rolling-shutter readout). The recommended mode is:
 
-    python process_sai_custom.py /PATH/TO/spectacular-rec-MY_RECORDING --keep_intrinsics
-    python train.py data/inputs-processed/custom/spectacular-rec-MY_RECORDING --train_all --preview
+    ./scripts/process_and_train_sai_custom_mbrs_pose_opt.sh
 
-To improve results even further, a second training pass (without pose optimization) can also be used (TODO: extend instructions). It is also possible to use the motion-blur only mode similarly to iOS.
+See the contents of the script for more details.
 
-For difficult cases where COLMAP is likely to fail (examples in `data/inputs-raw/spectacular-rec-extras/difficult_colmap_fail`), the Spectacular AI VISLAM poses can be used in place of COLMAP to initialize the pose optimization:
-
-    python process_sai_custom.py /PATH/TO/spectacular-rec-MY_RECORDING --skip_colmap
-    python train.py data/inputs-processed/custom/spectacular-rec-MY_RECORDING --train_all --preview
+Additionally, any folder of the form `data/inputs-processed/CASE` can be trained directly with Nerfstudio
+using the `ns-train splatfacto --data data/inputs-processed/CASE ...`. Use `--help` and see `train.py` for
+the recommended parameters.
 
 ## License
 
