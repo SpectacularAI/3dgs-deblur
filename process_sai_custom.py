@@ -15,8 +15,24 @@ def process(args):
         if not args.dry_run: subprocess.check_call(cmd)
 
     sai_params = json.loads(json.dumps(SAI_CLI_PROCESS_PARAMS))
+    sai_params['key_frame_distance'] = args.key_frame_distance
 
-    name = os.path.basename(args.spectacular_rec_input_folder)
+    tempdir = None
+    name = os.path.basename(args.spectacular_rec_input_folder_or_zip)
+
+    if name.endswith('.zip'):
+        name = name[:-4]
+        tempdir = tempfile.mkdtemp()
+        input_folder = os.path.join(tempdir, 'recording')
+        extract_command = [
+            "unzip",
+            args.spectacular_rec_input_folder_or_zip,
+            "-d",
+            input_folder,
+        ]
+        maybe_run_cmd(extract_command)
+    else:
+        input_folder = args.spectacular_rec_input_folder_or_zip
 
     sai_params_list = []
     for k, v in sai_params.items():
@@ -37,15 +53,14 @@ def process(args):
         final_target = args.output_folder
 
     if not args.skip_colmap:
-        tempdir = tempfile.mkdtemp()
-        result_name += '-colmap'
+        if tempdir is None: tempdir = tempfile.mkdtemp()
         target = os.path.join(tempdir, 'sai-cli', result_name)
     else:
         target = final_target
 
     cmd = [
         'sai-cli', 'process',
-        args.spectacular_rec_input_folder,
+        input_folder,
         target
     ] + sai_params_list
 
@@ -79,7 +94,7 @@ def process(args):
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("spectacular_rec_input_folder", type=str)
+    parser.add_argument("spectacular_rec_input_folder_or_zip", type=str)
     parser.add_argument("output_folder", type=str, default=None, nargs='?')
     parser.add_argument('--preview', action='store_true')
     parser.add_argument('--skip_colmap', action='store_true')
