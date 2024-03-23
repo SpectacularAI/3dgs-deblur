@@ -169,8 +169,7 @@ def process(input_folder, args):
 
     if args.preview:
         cmd.extend([
-            '--vis=viewer+tensorboard',
-            '--steps-per-eval-all-images', '100'
+            '--vis=viewer+tensorboard'
         ])
     else:
         cmd.append('--vis=tensorboard')
