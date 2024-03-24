@@ -154,8 +154,8 @@ def process(out_folder, args):
             length_seconds = get_original_length_seconds(raw_input_data_jsonl)
             print('original length %g' % length_seconds)
         else:
-            length_seconds = 8 # TODO
-            print('default length')
+            length_seconds = len(transforms['frames']) * 0.3
+            print('approx. length %g' % length_seconds)
 
         length_seconds /= args.playback_speed
         
@@ -164,6 +164,13 @@ def process(out_folder, args):
         
         frames = sorted(transforms['frames'], key=get_frame_number)
         frames = frames[::args.key_frame_stride]
+
+        if args.max_duration is not None:
+            max_frames = round(args.max_duration / length_seconds * len(frames))
+            if max_frames < len(frames):
+                length_seconds = length_seconds * max_frames / len(frames)
+                print('keeping %d/%d key frames to cut duration to %g' % (max_frames, len(frames), length_seconds))
+                frames = frames[:max_frames]
 
         frame_poses = [transform_func(frame['transform_matrix']) for frame in frames]
         loop = False
@@ -278,7 +285,7 @@ if __name__ == '__main__':
     parser.add_argument('--key_frame_stride', default=3, type=int)
     parser.add_argument('--dry_run', action='store_true')
     parser.add_argument('--original_trajectory', action='store_true')
-    parser.add_argument('--fps', default=60, type=int)
+    parser.add_argument('--fps', default=30, type=int)
     parser.add_argument('--playback_speed', default=0.5, type=float)
     parser.add_argument('--artificial_relative_motion_scale', default=0.6, type=float)
     parser.add_argument('--artificial_relative_look_at_distance', default=3, type=float)
@@ -286,6 +293,7 @@ if __name__ == '__main__':
     parser.add_argument('--artificial_length_seconds', default=8, type=float)
     parser.add_argument('--artificial_keep_center_pose', action='store_true')
     parser.add_argument('--rolling_shutter_time', default=0.0, type=float)
+    parser.add_argument('--max_duration', default=None, type=float)
     parser.add_argument('--resolution', type=str, default=None)
     parser.add_argument('--exposure_time', default=0.0, type=float)
     parser.add_argument('--zoom', default=1.0, type=float)

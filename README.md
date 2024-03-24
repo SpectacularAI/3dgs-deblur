@@ -88,6 +88,30 @@ This creates new datasets in `input-processed/` with `2nd-pass` in their name. T
 If _all_ relevant first pass runs have been completed, you can also run `./scripts/process_2nd_pass.sh`,
 which creates all the corresponding second pass datasets.
 
+## Training with custom data
+
+The method can be also be used with custom data recorded using the Spectacular Rec app ([v1.0.0+ for Android](https://play.google.com/store/apps/details?id=com.spectacularai.rec), [v1.2.0+ for iOS](https://apps.apple.com/us/app/spectacular-rec/id6473188128)).
+
+First, download and extract a recording created using the app, e.g., `/PATH/TO/spectacular-rec-MY_RECORDING`.
+
+**iOS cases** (short rolling shutter read-out): Process as
+
+    ./scrpts/process_and_train_sai_custom_mb.sh /PATH/TO/spectacular-rec-MY_RECORDING
+
+**Android** (long rolling-shutter readout). The recommended mode is:
+
+    ./scripts/process_and_train_sai_custom_mbrs_pose_opt.sh
+
+See the contents of the script for more details.
+
+Additionally, any folder of the form `data/inputs-processed/CASE` can be trained directly with Nerfstudio
+using the `ns-train splatfacto --data data/inputs-processed/CASE ...`. Use `--help` and see `train.py` for
+the recommended parameters.
+
+**Comparison video** To train a custom recording with and without motion blur compensation and render a video comparing the two, use this script:
+
+    ./scripts/render_and_train_comparison_sai_custom_mb.sh /PATH/TO/spectacular-rec-MY_RECORDING
+
 ## Viewing the results
 
 Results are written to `data/outputs/` by dataset. You can also run these on another machine
@@ -113,8 +137,8 @@ Off-the-shelf:
 
 Custom:
 
- * Automatically created by `train.py`: Renders of evaluation images and predictions are available in `outputs/DATASET/VARIANT/splatfacto/TIMESTAMP` (`/renders`, or `/demo_video*.mp4` if `render_video.py` has been run, see below)
- * Demo videos: see `render_video.py`.
+ * Created by `train.py --render_images ...`: Renders of evaluation images and predictions are available in `outputs/DATASET/VARIANT/splatfacto/TIMESTAMP` (`/renders`, or `/demo_video*.mp4` if `render_video.py` has been run, see below)
+ * Demo videos: see `render_video.py` and `scripts/render_and_combine_comparison_video.sh`
 
 ## Processing the raw input data
 
@@ -146,26 +170,6 @@ and then process with the following steps
         # EXTRA_VARIANTS=ON ./scripts/create_smartphone_variants.sh
 
 Note: all the components in this pipeline are not guaranteed to be deterministic, especially when executed on different machines.
-
-## Training with custom data
-
-The method can be also be used with custom data recorded using the Spectacular Rec app ([v1.0.0+ for Android](https://play.google.com/store/apps/details?id=com.spectacularai.rec), [v1.2.0+ for iOS](https://apps.apple.com/us/app/spectacular-rec/id6473188128)).
-
-First, download and extract a recording created using the app, e.g., `/PATH/TO/spectacular-rec-MY_RECORDING`.
-
-**iOS cases** (short rolling shutter read-out): Process as
-
-    ./scrpts/process_and_train_sai_custom_mb.sh /PATH/TO/spectacular-rec-MY_RECORDING
-
-**Android** (long rolling-shutter readout). The recommended mode is:
-
-    ./scripts/process_and_train_sai_custom_mbrs_pose_opt.sh
-
-See the contents of the script for more details.
-
-Additionally, any folder of the form `data/inputs-processed/CASE` can be trained directly with Nerfstudio
-using the `ns-train splatfacto --data data/inputs-processed/CASE ...`. Use `--help` and see `train.py` for
-the recommended parameters.
 
 ## License
 

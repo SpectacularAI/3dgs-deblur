@@ -224,7 +224,7 @@ def process(input_folder, args):
     output_folder = os.path.join(output_root, name)
     elapsed_time = 0
     if not args.dry_run and not args.eval_only:
-        if os.path.exists(output_folder) and args.case_number is not None:
+        if os.path.exists(output_folder):
             shutil.rmtree(output_folder)
 
         start_time = time.time()

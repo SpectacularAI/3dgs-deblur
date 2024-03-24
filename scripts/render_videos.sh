@@ -13,6 +13,7 @@ for case in factory cozyroom tanabata pool; do
         --video_crf=21 \
         --resolution=${reso} \
         --zoom=${zoom} \
+        --fps=60 \
         -o=data/renders/synthetic-${case}-mb-baseline-${reso}.mp4
 
     python render_video.py \
@@ -20,6 +21,7 @@ for case in factory cozyroom tanabata pool; do
         --video_crf=21 \
         --resolution=${reso} \
         --zoom=${zoom} \
+        --fps=60 \
         -o=data/renders/synthetic-${case}-mb-ours-${reso}.mp4
 
     python render_video.py \
@@ -27,6 +29,7 @@ for case in factory cozyroom tanabata pool; do
         --video_crf=21 \
         --resolution=${reso} \
         --zoom=${zoom} \
+        --fps=60 \
         -o=data/renders/synthetic-${case}-rs-baseline-${reso}.mp4
         
     python render_video.py \
@@ -34,6 +37,7 @@ for case in factory cozyroom tanabata pool; do
         --video_crf=21 \
         --resolution=${reso} \
         --zoom=${zoom} \
+        --fps=60 \
         -o=data/renders/synthetic-${case}-rs-ours-${reso}.mp4
 
     python render_video.py \
@@ -41,6 +45,7 @@ for case in factory cozyroom tanabata pool; do
         --video_crf=21 \
         --resolution=${reso} \
         --zoom=${zoom} \
+        --fps=60 \
         -o=data/renders/synthetic-${case}-posenoise-baseline-${reso}.mp4
         
     python render_video.py \
@@ -48,6 +53,7 @@ for case in factory cozyroom tanabata pool; do
         --video_crf=21 \
         --resolution=${reso} \
         --zoom=${zoom} \
+        --fps=60 \
         -o=data/renders/synthetic-${case}-posenoise-ours-${reso}.mp4
 done
 
