@@ -143,7 +143,6 @@ body {
   margin: 0;
 }
 
-
 .interpolation-panel {
   background: #f5f5f5;
   border-radius: 10px;
@@ -170,4 +169,81 @@ body {
 }
 #interpolation-image-wrapper img {
   border-radius: 5px;
+}
+
+.result-table table {
+  max-width: 25cm;
+  margin: 0 auto;
+}
+
+.result-table td {
+  padding: 0.1em !important;
+  width: 6em;
+}
+
+.result-table td, .result-table-transposed td {
+  color: #707070;
+}
+
+.result-table b, .result-table-transposed b{
+  color: black;
+}
+
+.result-table i, .result-table-transposed i {
+  color: #202020;
+}
+
+
+.result-table .first-col, .result-table-transposed .first-col {
+  color: #202020 !important;
+  text-align: left !important;
+}
+
+.result-table .first-col {
+  border-right: 1px solid #ddd;
+  max-width: 5cm !important;
+  width: 200px;
+}
+
+.result-table th {
+  border-bottom: 2px solid black !important;
+}
+
+.result-table .average-row {
+  border-top: 2px solid black;
+}
+
+.result-table .ablation-row {
+  background-color: #f5f5f5;
+}
+
+.result-table .ablation-row > td {
+  border-bottom: none !important;
+}
+
+.result-table-transposed .first-col {
+  max-width: 5cm !important;
+  width: 200px;
+}
+
+.result-table-transposed th {
+  font-weight: normal !important;
+  border-bottom: 2px solid black !important;
+  padding: 0.1em !important;
+}
+
+.result-table-transposed .metrics-row {
+  font-size: 80%;
+}
+
+.result-table-transposed table {
+  max-width: 30cm;
+  margin-left: auto;
+  margin-right: 0;
+  margin-bottom: 2em;
+}
+
+.result-table-transposed td {
+  padding: 0.1em !important;
+  width: 4em;
 }

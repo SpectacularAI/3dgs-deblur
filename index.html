@@ -253,8 +253,218 @@
         </div>
       </div>
     </div>
+    <div class="is-hidden-mobile">
+      <div class="column content has-text-centered" style="margin-bottom: 0">
+        <p><b>Table</b>: Numerical results and ablation study</p>
+      </div>
+      <div class="column content has-text-centered result-table">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Splatfacto</th>
+              <th>&#x5c;MB</th>
+              <th>&#x5c;RS</th>
+              <th>&#x5c;P.opt.</th>
+              <th>&#x5c;V.opt.</th>
+              <th>&#x5c;VIO</th>
+              <th>CVR</th>
+              <th>Ours</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="ablation-row">
+              <td class="first-col">Motion blur</td>
+              <td style="color: red;">-</td>
+              <td style="color: red;">-</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: teal;">&#x2713;</td>
+            </tr>
+            <tr class="ablation-row">
+              <td class="first-col">Rolling shut.</td>
+              <td style="color: red;">-</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: red;">-</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td>CVR</td>
+              <td style="color: teal;">&#x2713;</td>
+            </tr>
+            <tr class="ablation-row">
+              <td class="first-col">Pose opt.</td>
+              <td style="color: red;">-</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: red;">-</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: teal;">&#x2713;</td>
+            </tr>
+            <tr class="ablation-row">
+              <td class="first-col">Velocity opt.</td>
+              <td style="color: red;">-</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: red;">-</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: teal;">&#x2713;</td>
+            </tr>
+            <tr class="ablation-row">
+              <td class="first-col">VIO vel. init.</td>
+              <td></td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td style="color: teal;">&#x2713;</td>
+              <td></td>
+              <td style="color: red;">-</td>
+              <td></td>
+              <td style="color: teal;">&#x2713;</td>
+            </tr>
+            <tr>
+              <td class="first-col">iphone-lego1</td>
+              <td>28.05</td>
+              <td>28.12</td>
+              <td><i>29.20</i></td>
+              <td>28.59</td>
+              <td>28.71</td>
+              <td>29.03</td>
+              <td>23.26</td>
+              <td><b>29.20</b></td>
+            </tr>
+            <tr>
+              <td class="first-col">iphone-lego2</td>
+              <td>27.85</td>
+              <td>27.88</td>
+              <td>27.95</td>
+              <td>27.39</td>
+              <td><i>28.15</i></td>
+              <td><b>28.55</b></td>
+              <td>26.45</td>
+              <td>27.95</td>
+            </tr>
+            <tr>
+              <td class="first-col">iphone-lego3</td>
+              <td>23.75</td>
+              <td>23.71</td>
+              <td><i>24.50</i></td>
+              <td>24.10</td>
+              <td>24.22</td>
+              <td>23.78</td>
+              <td>22.45</td>
+              <td><b>24.50</b></td>
+            </tr>
+            <tr>
+              <td class="first-col">iphone-pots1</td>
+              <td>28.32</td>
+              <td>28.58</td>
+              <td>29.10</td>
+              <td>28.91</td>
+              <td>28.93</td>
+              <td><b>29.18</b></td>
+              <td>24.44</td>
+              <td><i>29.10</i></td>
+            </tr>
+            <tr>
+              <td class="first-col">iphone-pots2</td>
+              <td>27.25</td>
+              <td>27.39</td>
+              <td><i>28.00</i></td>
+              <td>27.68</td>
+              <td>26.66</td>
+              <td>27.81</td>
+              <td>23.64</td>
+              <td><b>28.00</b></td>
+            </tr>
+            <tr>
+              <td class="first-col">pixel5-lamp</td>
+              <td>28.22</td>
+              <td><i>30.91</i></td>
+              <td>28.38</td>
+              <td>28.77</td>
+              <td>29.75</td>
+              <td>29.70</td>
+              <td><b>31.95</b></td>
+              <td>30.46</td>
+            </tr>
+            <tr>
+              <td class="first-col">pixel5-plant</td>
+              <td>26.57</td>
+              <td>27.41</td>
+              <td>27.45</td>
+              <td>26.81</td>
+              <td>27.37</td>
+              <td>27.69</td>
+              <td><b>28.20</b></td>
+              <td><i>27.90</i></td>
+            </tr>
+            <tr>
+              <td class="first-col">pixel5-table</td>
+              <td>28.93</td>
+              <td>30.82</td>
+              <td>29.25</td>
+              <td>30.33</td>
+              <td>31.16</td>
+              <td>31.47</td>
+              <td><b>32.42</b></td>
+              <td><i>31.86</i></td>
+            </tr>
+            <tr>
+              <td class="first-col">s20-bike</td>
+              <td>27.35</td>
+              <td><i>27.74</i></td>
+              <td>27.57</td>
+              <td>27.58</td>
+              <td>27.58</td>
+              <td>27.72</td>
+              <td>26.62</td>
+              <td><b>28.93</b></td>
+            </tr>
+            <tr>
+              <td class="first-col">s20-bikerack</td>
+              <td>25.98</td>
+              <td><i>29.39</i></td>
+              <td>27.92</td>
+              <td>26.23</td>
+              <td>26.09</td>
+              <td>28.92</td>
+              <td>27.77</td>
+              <td><b>29.74</b></td>
+            </tr>
+            <tr>
+              <td class="first-col">s20-sign</td>
+              <td>23.71</td>
+              <td>25.93</td>
+              <td>24.47</td>
+              <td>25.44</td>
+              <td>25.54</td>
+              <td><i>26.28</i></td>
+              <td>24.19</td>
+              <td><b>26.84</b></td>
+            </tr>
+            <tr class="average-row">
+              <td class="first-col">average</td>
+              <td>26.91</td>
+              <td>27.99</td>
+              <td>27.62</td>
+              <td>27.44</td>
+              <td>27.65</td>
+              <td><i>28.19</i></td>
+              <td>26.49</td>
+              <td><b>28.59</b></td>
+            </tr>
+          </tbody>
+        </table>    
+      </div>
+    </div>
   </div>
-</div>
 </section>
 
 <section class="hero is-light is-small">
@@ -358,6 +568,135 @@
         </div>
       </div>
     </div>
+
+  <div class="is-hidden-mobile">
+  <div class="column content has-text-centered" style="margin-bottom: 0.5em; margin-top: 3em">
+    <p><b>Table</b>: Comparison to previous work. This uses the BAD-NeRF re-render of the synthetic data.</p>
+  </div>
+  <div class="content container result-table-transposed">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th colspan="3">Cozyroom</th>
+          <th colspan="3">Factory</th>
+          <th colspan="3">Pool</th>
+          <th colspan="3">Tanabata</th>
+          <th colspan="3">Trolley</th>
+        </tr>
+        <tr class="metrics-row">
+          <th></th>
+          <th>PSNR</th>
+          <th>SSIM</th>
+          <th>LPIPS</th>
+          <th>PSNR</th>
+          <th>SSIM</th>
+          <th>LPIPS</th>
+          <th>PSNR</th>
+          <th>SSIM</th>
+          <th>LPIPS</th>
+          <th>PSNR</th>
+          <th>SSIM</th>
+          <th>LPIPS</th>
+          <th>PSNR</th>
+          <th>SSIM</th>
+          <th>LPIPS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="first-col">Splatfacto</td>
+          <td>24.93</td>
+          <td>.802</td>
+          <td>.225</td>
+          <td>21.28</td>
+          <td>.598</td>
+          <td>.440</td>
+          <td>27.88</td>
+          <td>.763</td>
+          <td>.281</td>
+          <td>18.52</td>
+          <td>.533</td>
+          <td>.433</td>
+          <td>19.47</td>
+          <td>.564</td>
+          <td>.387</td>
+        </tr>
+        <tr>
+          <td class="first-col">MPR+Splatf.</td>
+          <td>29.26</td>
+          <td>.894</td>
+          <td>.093</td>
+          <td>23.38</td>
+          <td>.737</td>
+          <td>.246</td>
+          <td>30.96</td>
+          <td><i>.867</i></td>
+          <td>.176</td>
+          <td>22.77</td>
+          <td>.773</td>
+          <td>.227</td>
+          <td>26.49</td>
+          <td>.854</td>
+          <td>.185</td>
+        </tr>
+        <tr>
+          <td class="first-col">Deblur-NeRF</td>
+          <td>29.88</td>
+          <td>.890</td>
+          <td>.075</td>
+          <td>26.06</td>
+          <td>.802</td>
+          <td>.211</td>
+          <td>30.94</td>
+          <td>.840</td>
+          <td>.169</td>
+          <td>22.56</td>
+          <td>.764</td>
+          <td>.229</td>
+          <td>25.78</td>
+          <td>.812</td>
+          <td>.180</td>
+        </tr>
+        <tr>
+          <td class="first-col">BAD-NeRF</td>
+          <td><i>30.97</i></td>
+          <td><i>.901</i></td>
+          <td><i>.055</i></td>
+          <td><b>31.65</b></td>
+          <td><i>.904</i></td>
+          <td><i>.123</i></td>
+          <td><i>31.72</i></td>
+          <td>.858</td>
+          <td><i>.115</i></td>
+          <td><i>23.82</i></td>
+          <td><i>.831</i></td>
+          <td><i>.138</i></td>
+          <td><i>28.25</i></td>
+          <td><i>.873</i></td>
+          <td><i>.091</i></td>
+        </tr>
+        <tr>
+          <td class="first-col">Ours</td>
+          <td><b>31.80</b></td>
+          <td><b>.945</b></td>
+          <td><b>.032</b></td>
+          <td><i>30.54</i></td>
+          <td><b>.946</b></td>
+          <td><b>.078</b></td>
+          <td><b>32.08</b></td>
+          <td><b>.890</b></td>
+          <td><b>.075</b></td>
+          <td><b>24.79</b></td>
+          <td><b>.912</b></td>
+          <td><b>.079</b></td>
+          <td><b>30.16</b></td>
+          <td><b>.933</b></td>
+          <td><b>.044</b></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   </div>
 </section>
 
