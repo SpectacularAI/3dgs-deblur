@@ -1,8 +1,29 @@
 #!/bin/bash
 set -eux
 
-# Prerequisites: sai-cli and colmap-sai-cli-imgs intermediary datasets
-# have been created and are complete (see README.md for instructions)
+# Process raw input data. If set to OFF, then sai-cli and
+# colmap-sai-cli-imgs intermediary datasets must have been
+# fully generated or downloaded
+: "${PROCESS_RAW:=ON}"
+
+# Extra variants in the supplementary
+: "${EXTRA_VARIANTS:=OFF}"
+
+# Show preview in sai-cli
+: "${PREVIEW:=ON}"
+
+if [ $PREVIEW == "ON" ]; then
+    PREVIEW_FLAG="--preview"
+else
+    PREVIEW_FLAG=""
+fi
+
+if [ $PROCESS_RAW == "ON" ]; then
+	# Process and convert using the Spectacular AI SDK to get VIO velocity and pose estimates
+	python process_sai_inputs.py $PREVIEW_FLAG
+	# you can also run individual failing cases with: python run_colmap.py all --case=N
+	python run_colmap.py all --max_retries=10
+fi
 
 rm -rf data/inputs-processed/colmap-sai-cli-vels*
 rm -rf data/inputs-processed/colmap-sai-cli-orig-intrinsics*
@@ -33,15 +54,16 @@ done
 
 python train_eval_split_by_blur_score.py colmap-sai-cli-calib-intrinsics all
 
-# Extra variants in the supplementary
-: "${EXTRA_VARIANTS:=OFF}"
 if [ $EXTRA_VARIANTS == "ON" ]; then
-	# --- real data, no blur score filter
-	python process_sai_inputs.py --no_blur_score_filter --preview
-	# NOTE: run this until success
-	python run_colmap.py --dataset=sai-cli-no-blur-select all
-
 	rm -rf data/inputs-processed/colmap-sai-cli-no-blur-select-imgs*
+
+	if [ $PROCESS_RAW == "ON" ]; then
+		# --- real data, no blur score filter
+		python process_sai_inputs.py --no_blur_score_filter $PREVIEW_FLAG
+	fi
+
+	# NOTE: run this until success
+	python run_colmap.py --dataset=sai-cli-no-blur-select all --max_retries=10
 
 	# --- real data, no blur score filter, COLMAP intrinsics
 	python combine.py --dataset=sai-cli-no-blur-select all

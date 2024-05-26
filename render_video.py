@@ -263,11 +263,11 @@ def process(out_folder, args):
         'camera-path',
         '--load-config', config_file,
         '--camera-path-filename', trajectory_file,
-        '--video-crf', str(args.video_crf),
         '--output-path', video_file
     ]
 
-    print(render_cmd)
+    if args.video_crf is not None:
+        render_cmd.extend(['--crf', str(args.video_crf)])
 
     if not args.dry_run:
         with open(trajectory_file, 'wt') as f:
@@ -297,7 +297,7 @@ if __name__ == '__main__':
     parser.add_argument('--resolution', type=str, default=None)
     parser.add_argument('--exposure_time', default=0.0, type=float)
     parser.add_argument('--zoom', default=1.0, type=float)
-    parser.add_argument('--video_crf', default=18, type=int)
+    parser.add_argument('--video_crf', default=None, type=int)
     parser.add_argument('--case_number', type=int, default=-1)
     args = parser.parse_args()
 

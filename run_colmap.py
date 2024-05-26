@@ -2,6 +2,7 @@
 import os
 import subprocess
 import shutil
+import sys
 import tempfile
 
 def process(input_folder, args):
@@ -32,10 +33,27 @@ def process(input_folder, args):
     ]
 
     print(cmd)
+    success = False
     if not args.dry_run:
-        if os.path.exists(output_folder):
-            shutil.rmtree(output_folder)
-        subprocess.check_call(cmd)
+        for itr in range(args.max_retries):
+            if os.path.exists(output_folder):
+                shutil.rmtree(output_folder)
+
+            ret = subprocess.run(cmd, check=True, capture_output=True)
+            success = any([b'CONGRATS' in s for s in [ret.stdout, ret.stderr]]) # hacky
+            if success:
+                break
+            else:
+                print('COLMAP failed')
+                print('--- stdout ---')
+                sys.stdout.buffer.write(ret.stdout)
+                print('--- stderr ---')
+                sys.stderr.buffer.write(ret.stderr)
+                if itr != args.max_retries - 1:
+                    print('Retrying...')
+
+        if not success:
+            raise RuntimeError('Could not get COLMAP to succeed')
     
     temp_dir.cleanup()
 
@@ -48,6 +66,7 @@ if __name__ == '__main__':
     parser.add_argument('--dry_run', action='store_true')
     parser.add_argument('--dataset', default='sai-cli')
     parser.add_argument('--case_number', type=int, default=-1)
+    parser.add_argument('--max_retries', type=int, default=1)
     
     args = parser.parse_args()
 

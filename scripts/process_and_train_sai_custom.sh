@@ -8,11 +8,11 @@
 #
 # Run as
 #
-#   ./scripts/process_and_train_sai_custom_mb.sh /PATH/TO/RECORDING.zip
+#   ./scripts/process_and_train_sai_custom.sh /PATH/TO/RECORDING.zip
 #
 # or, in headless mode
 #
-#   SAI_PREVIEW=OFF ./scripts/process_and_train_sai_custom_mb.sh \
+#   SAI_PREVIEW=OFF ./scripts/process_and_train_sai_custom.sh \
 #       /PATH/TO/RECORDING.zip
 
 set -eux
@@ -21,11 +21,17 @@ NAME_W_EXT=`basename "$1"`
 NAME=${NAME_W_EXT%.zip}
 
 : "${SAI_PREVIEW:=ON}"
+: "${SKIP_COLMAP:=OFF}"
 if [ $SAI_PREVIEW == "ON" ]; then
     PREVIEW_FLAG="--preview"
 else
     PREVIEW_FLAG=""
 fi
+if [ $SKIP_COLMAP == "ON" ]; then
+    COLMAP_FLAG="--skip_colmap"
+else
+    COLMAP_FLAG=""
+fi
 
-python process_sai_custom.py "$1" $PREVIEW_FLAG
-python train.py data/inputs-processed/custom/$NAME  --no_eval --train_all --no_rolling_shutter --no_pose_opt --preview
+python process_sai_custom.py "$1" $COLMAP_FLAG $PREVIEW_FLAG
+python train.py data/inputs-processed/custom/$NAME --no_eval --train_all $PREVIEW_FLAG

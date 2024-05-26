@@ -30,8 +30,8 @@ def process(input_folder, args):
         image_folder = os.path.join(input_folder, 'images')
         ply_pc = os.path.join(input_folder, 'sparse_pc.ply')
     else:
-        model_f = os.path.join(input_folder, 'splatfacto')
-        input_json_path =  os.path.join(model_f, os.listdir(model_f)[0], 'transforms_train_scaled.json')
+        model_f = os.path.join(input_folder, args.model_name)
+        input_json_path =  os.path.join(model_f, os.listdir(model_f)[0], 'transforms_train.json')
         src_poses = { 'frames': read_json(input_json_path) }
         image_folder = os.path.join(sai_folder, 'images')
         ply_pc = os.path.join(sai_folder, 'sparse_pc.ply')
@@ -73,7 +73,8 @@ def process(input_folder, args):
         frame_centers_src.append(np.array(frame['transform_matrix'])[:3, 3].tolist())
 
         for prop in ['camera_angular_velocity', 'camera_linear_velocity']:
-            frame[prop] = sai_frame[prop]
+            if prop in sai_frame:
+                frame[prop] = sai_frame[prop]
 
         for prop in ['motion_blur_score']:
             if prop in sai_frame:
@@ -166,6 +167,7 @@ if __name__ == '__main__':
     parser.add_argument('--tolerate_missing', action='store_true')
     parser.add_argument('--override_calibration', type=str, default=None)
     parser.add_argument('--pose_opt_pass_dir', type=str, default=None)
+    parser.add_argument('--model_name', default='splatfacto')
     parser.add_argument('--dry_run', action='store_true')
     parser.add_argument('--case_number', type=int, default=-1)
     args = parser.parse_args()

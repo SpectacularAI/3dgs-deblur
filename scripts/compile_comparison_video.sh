@@ -4,6 +4,7 @@ set -eux
 INPUT_BASELINE="$1"
 INPUT_OURS="$2"
 OUTPUT="$3"
+: "${OURS_NAME:=Deblurred}"
 
 #: "${VIDEO_MODE:=HALF}"
 : "${VIDEO_MODE:=SWEEP}"
@@ -23,7 +24,7 @@ if [ $DRAW_TEXT == "ON" ]; then
     BASE_FILTER="
         $BASE_FILTER;\
         [base]drawtext=text='Baseline':fontcolor=white:fontsize=h/50:x=w/50:y=h/50[base];\
-        [ours]drawtext=text='Deblurred':fontcolor=white:fontsize=h/50:x=w-tw-w/50:y=h/50[ours]"
+        [ours]drawtext=text='$OURS_NAME':fontcolor=white:fontsize=h/50:x=w-tw-w/50:y=h/50[ours]"
 fi
 if [ $DRAW_BAR == "ON" ]; then
     BASE_FILTER="

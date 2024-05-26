@@ -210,7 +210,11 @@ class RenderModel:
 
                 # process pred outputs
                 camera = cameras[image_idx : image_idx + 1].to("cpu")
-                outputs = model.get_outputs_for_camera(camera=camera, camera_idx=image_idx)
+                #if self.set == "train":
+                # camera idx is used to fetch camera optimizer adjustments
+                # and should not be used for 'eval' data
+                camera.metadata['cam_idx'] = image_idx
+                outputs = model.get_outputs_for_camera(camera=camera)
 
                 rgb_out, depth_out = outputs["rgb"], outputs["depth"]
 

@@ -22,5 +22,5 @@ if [ $BUILD_NERFSTUDIO == "ON" ]; then
 fi
 
 if [ $INSTALL_SAI == "ON" ]; then
-    pip install spectacularAI[full]
+    pip install spectacularAI[full]==1.31.0
 fi

@@ -5,7 +5,7 @@ INPUT_BASE="$1"
 INPUT_OURS="$2"
 
 # zoom 2x original focal length to highlight details, slow speed (approx.)
-RENDER_ARGS="--zoom=1.5 --original_trajectory --playback_speed=0.25 --video_crf=21"
+RENDER_ARGS="--zoom=1.5 --original_trajectory --playback_speed=0.25"
 
 NAME=`basename "$INPUT_BASE"`
 

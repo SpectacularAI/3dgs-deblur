@@ -9,12 +9,17 @@ import json
 import re
 
 DATASET_SPECIFIC_PARAMETERS = {
-    r"synthetic.*": [
-        # Splatfacto seems to start to show gaps in reconstruction at high iteration counts
-        '--max-num-iterations', '15000',
-        # In synthetic data, the blur velocities are accurately known, no need to regularize
-        '--pipeline.model.blur-velocity-regularization=0',
-        #'--pipeline.model.blur-velocity-regularization=0.1',
+    r".*synthetic.*": [
+        # '--max-num-iterations', '20000', # this would be enough, usually
+        '--pipeline.model.num-downscales', '0', # low resolution -> no downscaling
+        # These help reconstructing large areas with very smooth color,
+        # i.e., the synthetic sky. With defaults, large holes can easily appear
+        '--pipeline.model.background-color', 'auto',
+        '--pipeline.model.cull-scale-thresh', '2.0',
+        # Evaluation data is known to be static. Don't try to optimize camera velocities
+        '--pipeline.model.optimize-eval-velocities=False',
+        # Hight motion blur, needs more samples
+        '--pipeline.model.blur-samples=10',
     ]
 }
 
@@ -24,18 +29,24 @@ def print_cmd(cmd):
 def flags_to_variant_name_and_cmd(args):    
     cmd = []
     variant = []
+
+    use_gamma_correction = False
+    optimize_eval_cameras = False
+
     if not args.get('no_pose_opt', False):
+        optimize_eval_cameras = True
         variant.append('pose_opt')
         cmd.extend([
             '--pipeline.model.camera-optimizer.mode=SO3xR3',
-            '--pipeline.model.use-scale-regularization=True',
-            '--pipeline.model.max-gauss-ratio=3',
-            '--pipeline.model.sh-degree=0'
+            ## '--pipeline.model.sh-degree=0'
         ])
 
     if not args.get('no_motion_blur', False):
         variant.append('motion_blur')
-        cmd.append('--pipeline.model.blur-samples=5')
+        # default blur samples: 5
+        use_gamma_correction = not args.get('no_gamma', False)
+        if not use_gamma_correction:
+            variant.append('no_gamma')
     else:
         cmd.append('--pipeline.model.blur-samples=0')
 
@@ -44,57 +55,27 @@ def flags_to_variant_name_and_cmd(args):
     else:
         cmd.append('--pipeline.model.rolling-shutter-compensation=False')
 
-    if args.get('train_all', False):
-        variant.append('train_all')
-
-    if args.get('no_gamma', False):
+    if use_gamma_correction:
+        # min RGB level only seems necessary with gamma correction
+        cmd.append('--pipeline.model.min-rgb-level=10')
+    else:
         cmd.append('--pipeline.model.gamma=1')
-        variant.append('no_gamma')
 
-    if args.get('no_blur_regularization', False):
-        cmd.append('--pipeline.model.blur-regularization=0')
-        variant.append('no_blur_regularization')
+    if not args.get('no_velocity_opt', False):
+        optimize_eval_cameras = True
+        cmd.append('--pipeline.model.camera-velocity-optimizer.enabled=True')
+        variant.append('velocity_opt')
 
-    if args.get('no_blur_velocity_regularization', False):
-        cmd.append('--pipeline.model.blur-velocity-regularization=0')
-        variant.append('no_blur_velocity_regularization')
+    if args.get('velocity_opt_zero_init', False):
+        cmd.append('--pipeline.model.camera-velocity-optimizer.zero-initial-velocities=True')
+        variant.append('zero_init')
 
     if len(variant) == 0:
         variant.append('baseline')
 
-    return '-'.join(variant), cmd
+    return '-'.join(variant), cmd, optimize_eval_cameras
 
-def compute_manual_scale_factor(transforms_path):
-    import numpy as np
-    with open(transforms_path) as f:
-        data = json.load(f)
-
-    centers = []
-    for frame in data['frames']:
-        pose = np.array(frame['transform_matrix'])
-        centers.append(pose[:3, 3].tolist())
-    
-    centers = np.array(centers)
-    centers = centers - np.mean(centers, axis=0)
-    scale_factor = 1.0 / float(np.max(np.abs(centers)))
-    return scale_factor
-
-def undo_scale_factor(out_dir_path, scale_factor):
-    def undo_scale_factor_file(fn):
-        with open(fn) as f:
-            data = json.load(f)
-        for frame in data:
-            for i in range(3):
-                frame['transform'][i][3] /= scale_factor
-        scaled_fn = fn.rpartition('.')[0] + '_scaled.json'
-        print('writing scaled poses to %s' % scaled_fn)
-        with open(scaled_fn, 'wt') as f:
-            json.dump(data, f, indent=4)
-
-    undo_scale_factor_file(os.path.join(out_dir_path, 'transforms_train.json'))
-    undo_scale_factor_file(os.path.join(out_dir_path, 'transforms_eval.json'))
-
-def evaluate(output_folder, elapsed_time, extract_poses=False, dry_run=False, render_images=True, scale_factor=1.0):
+def evaluate(output_folder, elapsed_time, dry_run=False, render_images=True):
     result_paths = find_config_path(output_folder)
     if result_paths is None:
         if dry_run: return
@@ -117,18 +98,6 @@ def evaluate(output_folder, elapsed_time, extract_poses=False, dry_run=False, re
         metrics['wall_clock_time_seconds'] = elapsed_time
         with open(metrics_path, 'w') as f:
             json.dump(metrics, f, indent=4)
-
-    if extract_poses:
-        extract_poses_cmd = [
-            'ns-export',
-            'cameras',
-            '--load-config', config_path,
-            '--output-dir', out_path
-        ]
-        print_cmd(extract_poses_cmd)
-        if not dry_run:
-            subprocess.check_call(extract_poses_cmd)
-            undo_scale_factor(out_path, scale_factor)
     
     if render_images:
         render_cmd = [
@@ -147,7 +116,8 @@ def process(input_folder, args):
         'splatfacto',
         '--data',  input_folder,
         '--viewer.quit-on-train-completion', 'True',
-        '--pipeline.model.min-rgb-level', '10',
+        '--pipeline.model.rasterize-mode', 'antialiased',
+        '--pipeline.model.use-scale-regularization', 'True',
         # '--logging.local-writer.max-log-size=0'
     ]
 
@@ -155,26 +125,21 @@ def process(input_folder, args):
         if re.match(pattern, args.dataset):
             cmd.extend(values)
 
-    pose_opt_enabled = not args.no_pose_opt
-
     if '--max-num-iterations' not in cmd:
-        if pose_opt_enabled:
-            cmd.extend(['--max-num-iterations', '15000'])
+        if args.draft:
+            cmd.extend(['--max-num-iterations', '3000'])
         else:
-            if args.draft:
-                cmd.extend(['--max-num-iterations', '3000'])
-            else:
-                # 20k is generally nice for real data
-                cmd.extend(['--max-num-iterations', '20000'])
+            cmd.extend(['--max-num-iterations', '20000'])
 
     if args.preview:
         cmd.extend([
-            '--vis=viewer+tensorboard'
+            '--vis=viewer+tensorboard',
+            '--viewer.websocket-host=127.0.0.1'
         ])
     else:
         cmd.append('--vis=tensorboard')
 
-    variant, variant_cmd = flags_to_variant_name_and_cmd(vars(args))
+    variant, variant_cmd, optimize_eval_cameras = flags_to_variant_name_and_cmd(vars(args))
     cmd.extend(variant_cmd)
 
     if args.case_number is None:
@@ -191,33 +156,31 @@ def process(input_folder, args):
 
     cmd.extend(['--output-dir', output_root])
 
-    cmd.append('nerfstudio-data')
+    cmd.extend([
+        'nerfstudio-data',
+        '--orientation-method', 'none',
+    ])
 
-    # Manual scaling is used to ensure the position and orientation penalty terms
-    # have a reasonable scale, while keeping poses consistent in two optimization passes
-    manual_scale_factor = 1.0
     if args.train_all:
-        manual_scale_factor = compute_manual_scale_factor(os.path.join(input_folder, 'transforms.json'))
-        print('manual_scale_factor %g' % manual_scale_factor)
-
         cmd.extend([
-            '--eval-mode', 'all',
-            # related to pose optimization when outputs are used
-            '--orientation-method', 'none',
-            '--center-method', 'none',
-            '--scale-factor', str(manual_scale_factor),
-            '--auto-scale-poses', 'False'
+            '--eval-mode', 'all'
+        ])
+        optimize_eval_cameras = False
+    elif '-scored' in args.input_folder or args.dataset == 'colmap-bad-nerf-synthetic-deblurring':
+        cmd.extend([
+            '--eval-mode', 'filename'
         ])
     else:
-        if '-scored' in args.input_folder:
-            cmd.extend([
-                '--eval-mode', 'filename'
-            ])
-        else:
-            cmd.extend([
-                '--eval-mode', 'interval',
-                '--eval-interval', '8'
-            ])
+        cmd.extend([
+            '--eval-mode', 'interval',
+            '--eval-interval', '8'
+        ])
+        #cmd.extend(['--eval-mode', 'all'])
+
+    if optimize_eval_cameras:
+        cmd.extend([
+            '--optimize-eval-cameras', 'True',
+        ])
 
     print_cmd(cmd)
     output_folder = os.path.join(output_root, name)
@@ -234,10 +197,8 @@ def process(input_folder, args):
     
     if not args.no_eval:
         evaluate(output_folder, elapsed_time,
-            extract_poses=pose_opt_enabled,
             dry_run=args.dry_run,
-            render_images=args.render_images,
-            scale_factor=manual_scale_factor)
+            render_images=args.render_images)
 
 def find_config_path(output_folder):
     model_folder = os.path.join(output_folder, 'splatfacto')
@@ -252,10 +213,36 @@ def find_config_path(output_folder):
     assert(len(paths) == 1)
     return paths[0]
 
+def add_velocity_opt_variants(variants, dataset):
+    has_velocity_info = ('sai-' in dataset
+        or 'spectacular-rec' in dataset
+        or ('synthetic-' in dataset and 'colmap' not in dataset and 'hloc' not in dataset)
+    )
+
+    new_variants = []
+    for v in variants:
+        v1 = v.copy()
+        no_velocity_to_optimize = 'no_rolling_shutter' in v and 'no_motion_blur' in v
+        if has_velocity_info or no_velocity_to_optimize:
+            v1.add('no_velocity_opt')
+            new_variants.append(v1)
+
+        if no_velocity_to_optimize: continue
+
+        if has_velocity_info:
+            new_variants.append(v)
+
+        v2 = v.copy()
+        v2.add('velocity_opt_zero_init')
+        new_variants.append(v2)
+
+    return new_variants
+
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description=__doc__)
 
+    # note: velocity optimization arguments are auto-added to all of these
     baseline = {
         'no_pose_opt',
         'no_motion_blur',
@@ -273,42 +260,54 @@ if __name__ == '__main__':
         { 'no_pose_opt', 'no_motion_blur' },
         { 'no_pose_opt' },
         { 'no_motion_blur' },
-        {}
+        set([])
     ]
 
     default_variants = full_variants
+    bad_nerf_variants = [
+        baseline,
+        { 'no_rolling_shutter', 'no_pose_opt' },
+        { 'no_rolling_shutter' }
+    ]
+
+    add_popt = lambda a: a + [o - {'no_pose_opt'} for o in a if 'no_pose_opt' in o]
 
     variants_by_dataset = {
         'synthetic-clear': [
             baseline
         ],
-        'synthetic-mb': [
+        'synthetic-mb': add_popt([
             baseline,
             { 'no_pose_opt', 'no_rolling_shutter' }
-        ],
-        'synthetic-rs': [
+        ]),
+        'synthetic-rs': add_popt([
             baseline,
             { 'no_pose_opt', 'no_motion_blur' }
-        ],
-        'synthetic-posenoise': [
+        ]),
+        'synthetic-posenoise': add_popt([
             baseline,
             { 'no_rolling_shutter', 'no_motion_blur' }
-        ],
-        'synthetic-mbrs': [
+        ]),
+        'synthetic-mbrs': add_popt([
             baseline,
             { 'no_pose_opt' },
             { 'no_pose_opt', 'no_motion_blur' },
             { 'no_pose_opt', 'no_rolling_shutter' }
-        ],
-        #'synthetic-mbrs-posenoise': full_variants,
-        #'synthetic-mbrs-pose-calib-noise': full_variants,
+        ]),
         'synthetic-posenoise-2nd-pass': [
             baseline
         ],
-        'colmap-sai-cli-vels-blur-scored': [
-            baseline,
-            { 'no_pose_opt', 'no_rolling_shutter' }
-        ]
+        'colmap-bad-nerf-synthetic-deblurring': bad_nerf_variants,
+        'colmap-bad-nerf-synthetic-novel-view': bad_nerf_variants,
+        'colmap-bad-nerf-synthetic-novel-view-manual-pc': add_popt(bad_nerf_variants),
+        'colmap-exblurf-synthetic-novel-view-manual-pc': bad_nerf_variants,
+        'hloc-exblurf-synthetic-novel-view-manual-pc': bad_nerf_variants,
+        'hloc-bad-nerf-synthetic-novel-view-manual-pc': bad_nerf_variants,
+        'hloc-bad-nerf-synthetic-novel-view-exact-intrinsics-manual-pc': bad_nerf_variants,
+        'hloc-bad-gaussians-synthetic-novel-view-manual-pc': bad_nerf_variants,
+        'colmap-bad-gaussians-synthetic-novel-view-manual-pc': bad_nerf_variants,
+        'colmap-mpr-deblurred-synthetic-all-manual-pc': bad_nerf_variants,
+        'colmap-mpr-deblurred-synthetic-novel-view-manual-pc': bad_nerf_variants + [{ 'no_rolling_shutter', 'no_motion_blur' }],
     }
 
     parser.add_argument("input_folder", type=str, default=None, nargs='?')
@@ -316,16 +315,16 @@ if __name__ == '__main__':
     parser.add_argument("--no_pose_opt", action='store_true')
     parser.add_argument("--no_motion_blur", action='store_true')
     parser.add_argument('--no_rolling_shutter', action='store_true')
+    parser.add_argument('--no_velocity_opt', action='store_true')
+    parser.add_argument('--velocity_opt_zero_init', action='store_true')
     parser.add_argument('--dataset', type=str, default='colmap-sai-cli-vels-blur-scored')
-    parser.add_argument('--train_all', action='store_true')
     parser.add_argument('--draft', action='store_true')
     parser.add_argument('--no_gamma', action='store_true')
-    parser.add_argument('--no_blur_regularization', action='store_true')
-    parser.add_argument('--no_blur_velocity_regularization', action='store_true')
     parser.add_argument('--dry_run', action='store_true')
     parser.add_argument('--render_images', action='store_true')
     parser.add_argument('--eval_only', action='store_true')
     parser.add_argument('--no_eval', action='store_true')
+    parser.add_argument('--train_all', action='store_true')
 
     parser.add_argument('--case_number', type=int, default=None)
     args = parser.parse_args()
@@ -336,7 +335,7 @@ if __name__ == '__main__':
     if args.case_number is not None:
         INPUT_ROOT = 'data/inputs-processed/' + args.dataset
         sessions = [os.path.join(INPUT_ROOT, f) for f in sorted(os.listdir(INPUT_ROOT))]
-        variants = variants_by_dataset.get(args.dataset, default_variants)
+        variants = add_velocity_opt_variants(variants_by_dataset.get(args.dataset, default_variants), args.dataset)
         cases = [(s, v) for v in variants for s in sessions]
 
         if args.case_number <= 0:

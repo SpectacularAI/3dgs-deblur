@@ -10,8 +10,6 @@ POSE_ORIENTATION_NOISE_DEG = 1
 
 INTRINSIC_NOISE_REL = 0.01
 
-REPROJECTION_ERROR_THRESHOLD_PIXELS = 10
-
 def rotation_matrix_to_rotvec(R):
     # Using a proven/stable algorithm. Other options are sketchy for small rotation
     from scipy.spatial.transform import Rotation
@@ -243,7 +241,7 @@ def reprojection_error(p_reproj, p_orig):
     if p_reproj is None: return 1e6
     return np.linalg.norm(p_reproj - np.array(p_orig))
 
-def triangulate(points1, points2, c2w_i, c2w_j, matches, intrinsics):
+def triangulate(points1, points2, c2w_i, c2w_j, matches, intrinsics, reprojection_error_pixels):
     filtered_matches = []
     points3d = []
     rejected_matches = []
@@ -275,7 +273,7 @@ def triangulate(points1, points2, c2w_i, c2w_j, matches, intrinsics):
             reprojection_error(rp1, p1),
             reprojection_error(rp2, p2))
 
-        if err > REPROJECTION_ERROR_THRESHOLD_PIXELS:
+        if err > reprojection_error_pixels:
             rejected_matches.append((match, rp1, rp2))
             continue
 
@@ -284,12 +282,13 @@ def triangulate(points1, points2, c2w_i, c2w_j, matches, intrinsics):
 
     return filtered_matches, points3d, rejected_matches
 
-def generate_seed_points_match_and_triangulate(target, visualize=False):
+def generate_seed_points_match_and_triangulate(target, visualize=False, dry_run=False, reprojection_error_pixels=10):
     json_path = os.path.join(target, "transforms.json")
     def is_eval_frame(i, frame):
         if i % 8 == 0:
-            vel = np.linalg.norm(frame['camera_linear_velocity']) + np.linalg.norm(frame['camera_angular_velocity'])
-            assert(vel == 0)
+            if 'camera_linear_velocity' in frame:
+                vel = np.linalg.norm(frame['camera_linear_velocity']) + np.linalg.norm(frame['camera_angular_velocity'])
+                assert(vel == 0)
             return True
         return False
 
@@ -326,7 +325,7 @@ def generate_seed_points_match_and_triangulate(target, visualize=False):
                     descriptor_pairs[i][0],
                     descriptor_pairs[j][0],
                     c2w_i, c2w_j,
-                    matches_ij, intrinsics)
+                    matches_ij, intrinsics, reprojection_error_pixels)
                 matches[(i, j)] = (matches_ij, points3d, rejected_matches)
 
         return matches
@@ -375,11 +374,12 @@ def generate_seed_points_match_and_triangulate(target, visualize=False):
                 xyzrgbs.append(p.tolist() + color.tolist())
     print('Triangulated %d points' % len(xyzrgbs))
 
-    with open(json_path, 'wt') as f:
-        json.dump(converted_json, f, indent=4)
+    if not dry_run:
+        with open(json_path, 'wt') as f:
+            json.dump(converted_json, f, indent=4)
 
-    seed_ply_path = os.path.join(target, "sparse_pc.ply")
-    point_cloud_to_ply(xyzrgbs, seed_ply_path)
+        seed_ply_path = os.path.join(target, "sparse_pc.ply")
+        point_cloud_to_ply(xyzrgbs, seed_ply_path)
 
 def process_dataset_folder(
         base_folder, 
