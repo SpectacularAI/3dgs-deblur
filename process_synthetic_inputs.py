@@ -409,7 +409,6 @@ if __name__ == '__main__':
     parser.add_argument('--dry_run', action='store_true')
     parser.add_argument('--points_only', action='store_true')
     parser.add_argument('--visualize', action='store_true')
-    parser.add_argument('--extras', action='store_true')
     args = parser.parse_args()
 
     process_dataset_folder(
@@ -431,37 +430,36 @@ if __name__ == '__main__':
         subfolder='raw_mb',
         **vars(args))
 
-    if args.extras:
-        process_dataset_folder(
-            'data/inputs-raw/synthetic-raw',
-            'data/inputs-processed/synthetic-mb-posenoise',
-            subfolder='raw_mb',
-            noisy_poses=True,
-            **vars(args))
-        
-        process_dataset_folder(
-            'data/inputs-raw/synthetic-raw',
-            'data/inputs-processed/synthetic-clear',
-            subfolder='raw_clear',
-            **vars(args))
-        
-        process_dataset_folder(
-            'data/inputs-raw/synthetic-raw',
-            'data/inputs-processed/synthetic-mbrs',
-            subfolder='raw_mbrs',
-            **vars(args))
+    process_dataset_folder(
+        'data/inputs-raw/synthetic-raw',
+        'data/inputs-processed/synthetic-mb-posenoise',
+        subfolder='raw_mb',
+        noisy_poses=True,
+        **vars(args))
 
-        process_dataset_folder(
-            'data/inputs-raw/synthetic-raw',
-            'data/inputs-processed/synthetic-mbrs-posenoise',
-            subfolder='raw_mbrs',
-            noisy_poses=True,
-            **vars(args))
+    process_dataset_folder(
+        'data/inputs-raw/synthetic-raw',
+        'data/inputs-processed/synthetic-clear',
+        subfolder='raw_clear',
+        **vars(args))
 
-        process_dataset_folder(
-            'data/inputs-raw/synthetic-raw',
-            'data/inputs-processed/synthetic-mbrs-pose-calib-noise',
-            subfolder='raw_mbrs',
-            noisy_poses=True,
-            noisy_intrinsics=True,
-            **vars(args))
+    process_dataset_folder(
+        'data/inputs-raw/synthetic-raw',
+        'data/inputs-processed/synthetic-mbrs',
+        subfolder='raw_mbrs',
+        **vars(args))
+
+    process_dataset_folder(
+        'data/inputs-raw/synthetic-raw',
+        'data/inputs-processed/synthetic-mbrs-posenoise',
+        subfolder='raw_mbrs',
+        noisy_poses=True,
+        **vars(args))
+
+    process_dataset_folder(
+        'data/inputs-raw/synthetic-raw',
+        'data/inputs-processed/synthetic-mbrs-pose-calib-noise',
+        subfolder='raw_mbrs',
+        noisy_poses=True,
+        noisy_intrinsics=True,
+        **vars(args))
