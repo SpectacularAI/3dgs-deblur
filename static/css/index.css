@@ -64,8 +64,8 @@ body {
 }
 
 .publication-venue {
+    margin-top: 0.5em !important;
     color: #555;
-    width: fit-content;
     font-weight: bold;
 }
 
