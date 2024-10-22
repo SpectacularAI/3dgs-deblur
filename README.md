@@ -29,11 +29,11 @@ First, download and extract a recording created using the app, e.g., `/PATH/TO/s
 
 Then process as
 
-    ./scrpts/process_and_train_sai_custom.sh /PATH/TO/spectacular-rec-MY_RECORDING
+    ./scripts/process_and_train_sai_custom.sh /PATH/TO/spectacular-rec-MY_RECORDING
 
 or, for a faster version:
 
-    SKIP_COLMAP=ON ./scrpts/process_and_train_sai_custom.sh /PATH/TO/spectacular-rec-MY_RECORDING
+    SKIP_COLMAP=ON ./scripts/process_and_train_sai_custom.sh /PATH/TO/spectacular-rec-MY_RECORDING
 
 See the contents of the script for more details.
 
