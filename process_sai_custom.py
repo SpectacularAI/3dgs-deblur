@@ -83,7 +83,7 @@ def process(args):
 
     result_name = name
 
-    if args.output_folder is None:
+    if not args.output_folder or args.output_folder is not None:
         final_target = os.path.join(DEFAULT_OUT_FOLDER, result_name)
     else:
         final_target = args.output_folder
