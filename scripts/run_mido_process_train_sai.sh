@@ -69,10 +69,10 @@ trap 'rm -f "$PID_FILE"' EXIT
 # Activate conda and the comfy environment
 log "Activating conda environment..."
 if [ "$DRY_RUN" = true ]; then
-    log "DRY RUN: Would activate conda environment '3dgs'"
+    log "DRY RUN: Would activate conda environment 'nerfstudio'"
 else
     source ~/miniconda3/etc/profile.d/conda.sh
-    conda activate 3dgs
+    conda activate nerfstudio
 fi
 
 cd $PROJECT_ROOT
