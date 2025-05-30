@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e  # Exit on error
 
-# Script to launch mido_process_train_sai.py in the background using the comfy conda environment
+# Script to launch mido_process_train_sai.py in the background using the 3dgs conda environment
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"

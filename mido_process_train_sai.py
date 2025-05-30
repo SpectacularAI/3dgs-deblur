@@ -168,8 +168,34 @@ def run_job(zip_path, processed_path, log_file, name):
         sys.stderr = sys.__stderr__
 
 
+def dry_run():
+    zipfiles = [f for f in os.listdir(MONITORED_PATH) if f.endswith(".zip")]
+
+    for zipfile in zipfiles:
+        zip_path = os.path.join(MONITORED_PATH, zipfile)
+        processing_path = os.path.join(PROCESSING_PATH, zipfile)
+        processed_path = os.path.join(PROCESSED_PATH, zipfile)
+        name = zipfile[:-4]
+        log_file = os.path.join(JOB_LOG_DIR if JOB_LOG_DIR else "logs", f"{name}.log")
+        if os.path.exists(processed_path) or os.path.exists(processing_path):
+            continue
+        os.rename(zip_path, processing_path)
+        run_job(processing_path, processed_path, log_file, name)
+
+        main_logger.info(f"Launched job for {zipfile}")
+        time.sleep(2)  # Give time for CUDA memory to update
+
+
 def main():
     global executor
+
+    # In dry run mode, we don't need a process pool
+    if DRY_RUN:
+        main_logger.info("DRY RUN: Would monitor for zip files and process them")
+        main_logger.info(f"DRY RUN: Would watch directory: {MONITORED_PATH}")
+        dry_run()
+        return
+
     executor = ProcessPoolExecutor()
     try:
         futures = []
@@ -202,7 +228,7 @@ def main():
                 cuda_free = get_free_cuda_memory()
                 required_mem = (running_jobs + 1) * MIN_REQUIRED
 
-                if cuda_free >= required_mem or DRY_RUN:
+                if cuda_free >= required_mem:
                     os.rename(zip_path, processing_path)
                     future = executor.submit(
                         run_job, processing_path, processed_path, log_file, name
